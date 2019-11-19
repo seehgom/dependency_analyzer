@@ -2,26 +2,27 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "devDependencies": {
-    "dotup-ts-git-wrapper": "^1.0.0",
-    "gulp": "^4.0.2",
-    "gulp-tslint": "^8.1.4",
-    "gulp-typescript": "^6.0.0-alpha.1",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-gh-pages": "^0.5.4",
-    "gulp-typedoc": "^2.2.3",
-    "gulp-mocha": "^7.0.2",
-    "del": "^5.1.0",
-    "cross-spawn": "^7.0.1",
     "@types/chai": "^4.2.5",
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
+    "cross-spawn": "^7.0.1",
+    "del": "^5.1.0",
+    "dotup-ts-git-wrapper": "^1.0.0",
+    "gh-pages": "^2.1.1",
+    "gulp": "^4.0.2",
+    "gulp-gh-pages": "^0.5.4",
+    "gulp-mocha": "^7.0.2",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-tslint": "^8.1.4",
+    "gulp-typedoc": "^2.2.3",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "mocha": "^6.2.2",
+    "prettier": "^1.19.1",
     "ts-node": "^8.5.2",
-    "typedoc": "^0.15.2",
-    "typescript": "^3.7.2",
     "tslint": "^5.20.1",
     "tslint-microsoft-contrib": "^6.2.0",
-    "gh-pages": "^2.1.1"
+    "typedoc": "^0.15.2",
+    "typescript": "^3.7.2"
   },
   "repository": {
     "type": "git",
@@ -45,5 +46,10 @@
   "author": {
     "name": "",
     "email": ""
+  },
+  "dependencies": {
+    "class-transformer": "^0.2.3",
+    "es6-shim": "^0.35.5",
+    "reflect-metadata": "^0.1.13"
   }
 }
