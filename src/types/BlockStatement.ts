@@ -1,10 +1,10 @@
-import {ExpressionStatement} from './ExpressionStatement';
 import { NodeExpression } from './NodeExpression';
+import { ExpressionStatementNode } from './ExpressionStatementNode';
 export class BlockStatement implements NodeExpression {
-  type!: "BlockStatement";
-  body!: ExpressionStatement[];
+  type: "BlockStatement" = "BlockStatement";
+  body!: ExpressionStatementNode[];
   
-  constructor( type: "BlockStatement", body: ExpressionStatement[] ) {
+  constructor( type: "BlockStatement", body: ExpressionStatementNode[] ) {
     this.type = "BlockStatement";
     this.body = body;
   }

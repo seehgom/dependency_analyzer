@@ -11,7 +11,7 @@ export class VariableInitializationExpressionNode implements NodeExpression {
   init!: LiteralExpressionNode;
   
   constructor( type: "VariableDeclarator", id: IdentifierExpressionNode, init: LiteralExpressionNode ) {
-    this.type = type;
+    this.type = "VariableDeclarator";
     this.id = id;
     this.init = init;
   }
