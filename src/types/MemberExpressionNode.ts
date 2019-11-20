@@ -1,12 +1,27 @@
 import {CallExpressionNode} from './CallExpressionNode';
-import {ExpressionNode} from './ExpressionNode';
 import {IdentifierExpressionNode} from './IdentifierExpressionNode';
+import { NodeExpression } from './NodeExpression';
+import { plainToClass, Type } from 'class-transformer';
 
-export class MemberExpressionNode {
-  type!: "MemberExpression";
+export class MemberExpressionNode extends NodeExpression {
+  type: "MemberExpression" = "MemberExpression";
   computed?: boolean;
+  @Type(() => NodeExpression, {
+    discriminator: {
+      property: "type",
+      subTypes: [
+        { value: IdentifierExpressionNode, name: "Identifier" },
+        { value: CallExpressionNode, name: "CallExpression" }
+      ]
+    }
+  })
   object!: CallExpressionNode | IdentifierExpressionNode;
-  property!: ExpressionNode;
+  @Type(() => IdentifierExpressionNode)
+  property!: IdentifierExpressionNode;
+  
+  static fromJson(jsonData): MemberExpressionNode {
+    return plainToClass(MemberExpressionNode, jsonData);
+  }
   
   isAngularJSModuleDeclaration(): boolean {
     if(this.property.type == "Identifier" && this.property.name == "module" &&  this.object.getParent() == "angular"){

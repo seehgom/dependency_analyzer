@@ -1,15 +1,11 @@
 import { plainToClass } from 'class-transformer';
+import { NodeExpression } from './NodeExpression';
 
-export class LiteralExpressionNode {
-  type!: "Literal";
+export class LiteralExpressionNode extends NodeExpression {
+  type: "Literal" = "Literal";
   value!: string;
   raw!: string;
   
-  constructor( type: "Literal", value: string, raw: string ) {
-    this.type = type;
-    this.value = value;
-    this.raw = raw;
-  }
   static fromJson(jsonData): LiteralExpressionNode{
     return plainToClass(LiteralExpressionNode, jsonData);
   }

@@ -1,7 +1,8 @@
 import {BlockStatement} from './BlockStatement';
 import {IdentifierExpressionNode} from './IdentifierExpressionNode';
-export class FunctionExpressionNode {
-  type!: "FunctionExpression"
+import { NodeExpression } from './NodeExpression';
+export class FunctionExpressionNode implements NodeExpression {
+  type: "FunctionExpression" = "FunctionExpression";
   id = null
   params!: IdentifierExpressionNode[]
   defaults: any[]

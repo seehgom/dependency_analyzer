@@ -1,11 +1,12 @@
 import { plainToClass } from 'class-transformer';
+import { NodeExpression } from './NodeExpression';
 
-export class IdentifierExpressionNode {
-  type!: "Identifier";
+export class IdentifierExpressionNode implements NodeExpression {
+  type: "Identifier" = "Identifier";
   name!: string;
   
   constructor( type: "Identifier", name: "moduleName" ) {
-    this.type = type;
+    this.type = "Identifier";
     this.name = name;
   }
   static fromJson(jsonData): IdentifierExpressionNode {
@@ -20,5 +21,8 @@ export class IdentifierExpressionNode {
   }
   isAngularJSControllerDeclaration(): boolean {
     return false;
+  }
+  getParent(): string {
+    return this.name;
   }
 }

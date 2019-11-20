@@ -1,14 +1,37 @@
-import {ExpressionNode} from './ExpressionNode';
 import {MemberExpressionNode} from './MemberExpressionNode';
 import {IdentifierExpressionNode} from './IdentifierExpressionNode';
 import {LiteralExpressionNode} from './LiteralExpressionNode';
 import {ArrayExpression} from './ArrayExpression';
 import {FunctionExpressionNode} from './FunctionExpressionNode';
-export class CallExpressionNode {
-  type!: "CallExpression";
+import { NodeExpression } from './NodeExpression';
+import { plainToClass, Type } from 'class-transformer';
+export class CallExpressionNode extends NodeExpression {
+  type: "CallExpression" = "CallExpression";
+  @Type(() => NodeExpression, {
+    discriminator: {
+      property: "type",
+      subTypes: [
+        { value: IdentifierExpressionNode, name: "Identifier" },
+        { value: MemberExpressionNode, name: "MemberExpression" }
+      ]
+    }
+  })
   callee!: MemberExpressionNode | IdentifierExpressionNode;
-  arguments!: [IdentifierExpressionNode | LiteralExpressionNode, ArrayExpression |CallExpressionNode | FunctionExpressionNode ]
-  // |  ExpressionNode[];
+  @Type(() => NodeExpression, {
+    discriminator: {
+      property: "type",
+      subTypes: [
+        { value: LiteralExpressionNode, name: "Literal" },
+        { value: IdentifierExpressionNode, name: "Identifier" },
+        { value: FunctionExpressionNode, name: "FunctionExpression" },
+        { value: CallExpressionNode, name: "CallExpression" },
+        { value: ArrayExpression, name: "ArrayExpression" }
+      ]
+    }
+  })
+  arguments!: [IdentifierExpressionNode | LiteralExpressionNode, ArrayExpression |CallExpressionNode | FunctionExpressionNode ];
+  
+  
   getParent(): string {
     if(this.callee instanceof IdentifierExpressionNode){
       return this.callee.name;
@@ -46,5 +69,10 @@ export class CallExpressionNode {
     if(this.isAngularJSControllerDeclaration()){
       return this.arguments[0];
     }
+    return false;
+  }
+  
+  static fromJson( jsonData ): CallExpressionNode {
+    return plainToClass(CallExpressionNode, jsonData);
   }
 }
