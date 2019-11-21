@@ -2,10 +2,10 @@ import "reflect-metadata";
 import "es6-shim";
 import {plainToClass} from 'class-transformer';
 import {expect} from 'chai';
-import { VariableDeclarationExpressionNode } from '../src/types/VariableDeclarationExpressionNode';
+import { VariableDeclaration } from '../src/types/VariableDeclaration';
 
-describe('VariableDeclarationExpressionNode test', ()=>{
-  it('VariableDeclarationExpressionNode initialization should exist', ()=>{
+describe('VariableDeclaration test', ()=>{
+  it('VariableDeclaration initialization should exist', ()=>{
     const jsonData = {
       "type": "VariableDeclarator",
       "id": {
@@ -18,11 +18,12 @@ describe('VariableDeclarationExpressionNode test', ()=>{
         "raw": "\"test\""
       }
     };
-    const obj: VariableDeclarationExpressionNode = plainToClass(VariableDeclarationExpressionNode, jsonData);
-    expect(obj instanceof VariableDeclarationExpressionNode).to.be.true;
+    const obj: VariableDeclaration = plainToClass(VariableDeclaration, jsonData);
+    expect(obj instanceof VariableDeclaration).to.be.true;
     expect(obj.isInitalization()).to.be.true;
+    expect(obj.isLiteralInitalization()).true;
   });
-  it('VariableDeclarationExpressionNode declaration and initialization should exist', ()=>{
+  it('VariableDeclaration declaration and initialization should exist', ()=>{
     const jsonData = {
       "type": "VariableDeclaration",
       "declarations": [
@@ -41,9 +42,55 @@ describe('VariableDeclarationExpressionNode test', ()=>{
       ],
       "kind": "var"
     };
-    const obj: VariableDeclarationExpressionNode = plainToClass(VariableDeclarationExpressionNode, jsonData);
-    expect(obj instanceof VariableDeclarationExpressionNode).to.be.true;
+    const obj: VariableDeclaration = plainToClass(VariableDeclaration, jsonData);
+    expect(obj instanceof VariableDeclaration).to.be.true;
     expect(obj.isInitalization()).to.be.false;
+    expect(obj.isLiteralInitalization()).false;
+  });
+  
+  it('object declaration should exist', ()=>{
+    const jsonData = {
+      "type": "Identifier",
+      "name": "jquery"
+    };
+    const obj: VariableDeclaration = plainToClass(VariableDeclaration, jsonData);
+    expect(obj instanceof VariableDeclaration).to.be.true;
+    expect(obj.isInitalization()).to.be.false;
+  });
+  
+  it('object declaration and initialization should exist', ()=>{
+    const jsonData = {
+      "type": "VariableDeclarator",
+      "id": {
+        "type": "Identifier",
+        "name": "jquery"
+      },
+      "init": {
+        "type": "ObjectExpression",
+        "properties": []
+      }
+    };
+    const obj: VariableDeclaration = plainToClass(VariableDeclaration, jsonData);
+    expect(obj instanceof VariableDeclaration).to.be.true;
+    expect(obj.isInitalization()).to.be.true;
+    expect(obj.isLiteralInitalization()).false;
+  });
+  it('variable declaration containing initialization should exist', ()=>{
+    const jsonData = {
+      "type": "VariableDeclarator",
+      "id": {
+        "type": "Identifier",
+        "name": "jquery"
+      },
+      "init": {
+        "type": "ObjectExpression",
+        "properties": []
+      }
+    };
+    const obj: VariableDeclaration = plainToClass(VariableDeclaration, jsonData);
+    expect(obj instanceof VariableDeclaration).to.be.true;
+    expect(obj.isInitalization()).to.be.true;
+    expect(obj.isLiteralInitalization()).false;
   });
   
 });

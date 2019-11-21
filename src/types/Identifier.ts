@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { NodeExpression } from './NodeExpression';
 
-export class IdentifierExpressionNode implements NodeExpression {
+export class Identifier implements NodeExpression {
   type: "Identifier" = "Identifier";
   name!: string;
   
@@ -9,8 +9,8 @@ export class IdentifierExpressionNode implements NodeExpression {
     this.type = "Identifier";
     this.name = name;
   }
-  static fromJson(jsonData): IdentifierExpressionNode {
-    return plainToClass(IdentifierExpressionNode, jsonData);
+  static fromJson(jsonData): Identifier {
+    return plainToClass(Identifier, jsonData);
   }
   
   isRootMemberExpression(): boolean {

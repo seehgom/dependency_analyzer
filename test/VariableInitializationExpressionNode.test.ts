@@ -4,8 +4,8 @@ import {plainToClass} from 'class-transformer';
 import {expect} from 'chai';
 
 import { VariableInitializationExpressionNode } from '../src/types/VariableInitializationExpressionNode';
-import { IdentifierExpressionNode } from '../src/types/IdentifierExpressionNode';
-import { LiteralExpressionNode } from '../src/types/LiteralExpressionNode';
+import { Identifier } from '../src/types/Identifier';
+import { Literal } from '../src/types/Literal';
 
 describe('VariableInitializationExpressionNode test', ()=>{
   it('should VariableInitializationExpressionNode exist', function () {
@@ -23,8 +23,8 @@ describe('VariableInitializationExpressionNode test', ()=>{
     };
     const obj : VariableInitializationExpressionNode = plainToClass(VariableInitializationExpressionNode, jsonData);
     expect(obj instanceof VariableInitializationExpressionNode).to.be.true;
-    expect(obj.id instanceof IdentifierExpressionNode).to.be.true;
-    expect(obj.init instanceof LiteralExpressionNode).to.be.true;
+    expect(obj.id instanceof Identifier).to.be.true;
+    expect(obj.init instanceof Literal).to.be.true;
   });
 });
 
