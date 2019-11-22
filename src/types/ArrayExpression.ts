@@ -7,63 +7,86 @@ import { NodeExpression } from './NodeExpression';
 import * as _ from 'lodash';
 export class ArrayExpression implements NodeExpression {
   type: "ArrayExpression" = "ArrayExpression";
-  @Type(() => NodeExpression, {
-    discriminator: {
-      property: "type",
-      subTypes: [
-        { value: Literal, name: "Literal" },
-        { value: Identifier, name: "Identifier" },
-        { value: FunctionExpression, name: "FunctionExpression" },
-        { value: CallExpression, name: "CallExpression" }
-      ]
-    }
-  }) private _elements: [] | [Literal | Identifier,  FunctionExpression | Identifier | CallExpression ];
+  elements: any[];
   
-  
-  get elements(): [] | [(Literal | Identifier), (FunctionExpression | Identifier | CallExpression)] {
-    return this._elements;
+  canBeAngularJSModuleDeps(): boolean {
+    if (_.isNil(this.elements) || !_.isArray(this.elements)) return false;
+    if (_.isEmpty(this.elements)) return true;
+    return _.reduce(this.elements, (isValidAngularJSDepSoFar, depName)=>{
+      if (depName.type!=="Literal" && depName.type!=="Identifier") isValidAngularJSDepSoFar = false;
+      return isValidAngularJSDepSoFar;
+    }, true);
   }
   
-  set elements( value: [] | [(Literal | Identifier), (FunctionExpression | Identifier | CallExpression)] ) {
-    debugger;
-    if (_.isEmpty(value)){
-      this._elements = [];
-      return;
-    }
-    const Id = value[0];
-    const Main = value[1];
-    if (!Id || !Main){
-      this._elements = [];
-    }
-    if (Id.type=="Literal"){
-      this._id = Literal.fromJson(Id);
-    } else if (Id.type=="Identifier") {
-      this._id = Identifier.fromJson(Id);
-    } else {
-      this._id = null;
-    }
-    if (Main.type=="FunctionExpression"){
-      this._main = FunctionExpression.fromJson(Main);
-    } else if (Main.type == "Identifier"){
-      this._main = Identifier.fromJson(Main);
-    } else if (Main.type=="CallExpression"){
-      this._main = CallExpression.fromJson(Main);
-    } else {
-      this._main = null;
-    }
-    this._elements = [this._id, this._main];
+  getAngularJSModuleDeps(): false | Identifier[] | Literal[] {
+    if (!this.canBeAngularJSModuleDeps()) return false;
+    if (_.isEmpty(this.elements)) return [];
+    return  _.reduce(this.elements, (dependenciesSofar, depName)=>{
+      if (depName.type=="Literal") return [...dependenciesSofar, Literal.fromJson(depName)];
+      if (depName.type=="Identifier") return [...dependenciesSofar, Identifier.fromJson(depName)];
+      throw new Error("AngularJS Dependencies can be only be array containing string literals or variables with string as value");
+    }, []);
+    
   }
   
-  _id: (Literal | Identifier);
-  _main: (FunctionExpression | Identifier | CallExpression);
+  // isAngularJSControllerArgs(): boolean {
+  //   if(_.isNil(this.elements) || (_.isArray(this.elements) && this.elements.length !== 2)) return false;
+  //   const Name = this.elements[0];
+  //   const Body = this.elements[1];
+  //   if (!Name || !Body) return false;
+  //   if (Name.type!=="Literal" || Name.type!=="Identifier") return false;
+  //   if (Body.type!=="FunctionExpression" || Body.type!== "Identifier" || Body.type!=="CallExpression") return false;
+  //   return true;
+  // }
+  // getAngularJSControllerArgs(): [(Literal | Identifier), (FunctionExpression | Identifier | CallExpression)] | false {
+  //   if (!this.isAngularJSControllerArgs()) return false;
+  //   const Name = this.elements[0];
+  //   const Body = this.elements[1];
+  //   let CtrlName: Literal | Identifier;
+  //   let CtrlBodyDeps: Identifier | FunctionExpression | CallExpression;
+  //   if (Name.type=="Literal"){
+  //     CtrlName = Literal.fromJson(Name);
+  //   } else if (Name.type=="Identifier") {
+  //     CtrlName = Identifier.fromJson(Name);
+  //   }
+  //   if (Body.type=="FunctionExpression"){
+  //     CtrlBodyDeps = FunctionExpression.fromJson(Body);
+  //   } else if (Body.type == "Identifier"){
+  //     CtrlBodyDeps = Identifier.fromJson(Body);
+  //   } else if (Body.type=="CallExpression"){
+  //     CtrlBodyDeps = CallExpression.fromJson(Body);
+  //   }
+  //   return [CtrlName, CtrlBodyDeps];
+  // }
+  isisAngularJSComponentDepsBody(): boolean {
+    if (_.isNil(this.elements) || !_.isArray(this.elements) || _.isEmpty(this.elements)) return false;
+    const possibleFunctionDeclaration = _.last(this.elements);
+    if (possibleFunctionDeclaration.type!=="Identifier" && possibleFunctionDeclaration.type!=="FunctionExpression" && possibleFunctionDeclaration.type!=="CallExpression") return false;
+    let result = true;
+    this.elements.forEach((depName, index)=>{
+      if (depName.type!=="Identifier" && depName.type!=="Literal" && index !== (this.elements.length-1)) result=false;
+    });
+    return result;
+  }
   
+  getAngularJSComponentDeps(): false | Identifier[] | Literal[] {
+    if (!this.isisAngularJSComponentDepsBody()) return false;
+    return _.reduce(this.elements, (depSoFar, dep, index)=>{
+      if (index == (this.elements.length-1)) return depSoFar;
+      if (dep.type=="Literal"){
+        return [...depSoFar, Identifier.fromJson(dep)];
+      } else if (dep.type=="Literal") {
+        return [...depSoFar, Identifier.fromJson(dep)];
+      }
+    }, []);
+  }
   
   static fromJson(jsonData): ArrayExpression {
     return plainToClass(ArrayExpression, jsonData)
   }
   
-  constructor( type: "ArrayExpression", elements: [(Literal | Identifier), (FunctionExpression | Identifier | CallExpression)] ) {
+  constructor( type: "ArrayExpression", elements: any[] ) {
     this.type = "ArrayExpression";
-    this._elements = elements;
+    this.elements = elements;
   }
 }
