@@ -16,9 +16,17 @@ export class MemberExpression extends NodeExpression {
       ]
     }
   }) private _object!: CallExpression | Identifier;
-  @Type(() => Identifier)
-  property!: Identifier;
+  @Type(() => Identifier) private _property!: Identifier;
   
+  
+  get property(): Identifier {
+    return this._property;
+  }
+  
+  set property( value: Identifier ) {
+    if (value.type!=="Identifier") throw new Error("MemberExpression's property must be an identifier, but is "+JSON.stringify(value));
+    this._property = Identifier.fromJson(value);
+  }
   
   get object(): CallExpression | Identifier {
     return this._object;
@@ -27,11 +35,11 @@ export class MemberExpression extends NodeExpression {
   set object( value: CallExpression | Identifier ) {
     debugger;
     if (value.type == "CallExpression") {
-      this._object = UtilityFunctions.fromJson<CallExpression>(value);
+      this._object = CallExpression.fromJson(value);
     } else if(value.type == "Identifier") {
-      this._object = UtilityFunctions.fromJson<Identifier>(value);
+      this._object = Identifier.fromJson(value);
     } else {
-      throw new Error("Wrong type of object property passed");
+      throw new Error("Wrong type of object property passed, but is "+JSON.stringify(value));
     }
   }
   
@@ -41,7 +49,7 @@ export class MemberExpression extends NodeExpression {
     this.type = "MemberExpression";
     this.computed = computed;
     this._object = object;
-    this.property = property;
+    this._property = property;
   }
   
   static fromJson(jsonData): MemberExpression {
@@ -49,26 +57,25 @@ export class MemberExpression extends NodeExpression {
   }
   
   isAngularJSModuleDeclaration(): boolean {
-    if(this.property.type == "Identifier" && this.property.name == "module" &&  this._object.getParent() == "angular"){
+    if(this._property.type == "Identifier" && this._property.name == "module" &&  this._object.getParent() == "angular"){
       return true;
     }
     return false;
   }
   
-  isAngularJSControllerDeclaration(): boolean {
-    if(this.property.type == "Identifier" && this.property.name == "controller" && this._object.getParent() == "angular"){
+  isAngularJSComponentDeclaration(): boolean {
+    if(this._property.type == "Identifier" && this._property.name == "controller" && this._object.getParent() == "angular"){
       return true;
     }
     return false;
   }
   
-  getParent(): string {
+  getParent(): string | false {
     if(this._object instanceof Identifier) {
       return this._object.name;
     } else {
       return this._object.getParent();
     }
-    
   }
   
   isRootMemberExpression() {

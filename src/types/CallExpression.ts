@@ -1,10 +1,11 @@
-import {MemberExpression} from './MemberExpression';
-import {Identifier} from './Identifier';
-import {Literal} from './Literal';
-import {ArrayExpression} from './ArrayExpression';
-import {FunctionExpression} from './FunctionExpression';
-import { NodeExpression } from './NodeExpression';
-import { plainToClass, Type } from 'class-transformer';
+import { MemberExpression } from "./MemberExpression";
+import { Identifier } from "./Identifier";
+import { Literal } from "./Literal";
+import { ArrayExpression } from "./ArrayExpression";
+import { FunctionExpression } from "./FunctionExpression";
+import { NodeExpression } from "./NodeExpression";
+import { plainToClass, Type } from "class-transformer";
+import * as _ from "lodash";
 export class CallExpression extends NodeExpression {
   type: "CallExpression" = "CallExpression";
   @Type(() => NodeExpression, {
@@ -12,67 +13,135 @@ export class CallExpression extends NodeExpression {
       property: "type",
       subTypes: [
         { value: Identifier, name: "Identifier" },
-        { value: MemberExpression, name: "MemberExpression" }
+        { value: MemberExpression, name: "MemberExpression" },
+        { value: FunctionExpression, name: "FunctionExpression" }
       ]
     }
   })
-  callee!: MemberExpression | Identifier;
-  @Type(() => NodeExpression, {
-    discriminator: {
-      property: "type",
-      subTypes: [
-        { value: Literal, name: "Literal" },
-        { value: Identifier, name: "Identifier" },
-        { value: FunctionExpression, name: "FunctionExpression" },
-        { value: CallExpression, name: "CallExpression" },
-        { value: ArrayExpression, name: "ArrayExpression" }
-      ]
-    }
-  })
-  arguments!: [Identifier | Literal, ArrayExpression |CallExpression | FunctionExpression ];
-  
-  
-  getParent(): string {
-    if(this.callee instanceof Identifier){
-      return this.callee.name;
+  private _callee!: MemberExpression | Identifier | FunctionExpression;
+
+  get callee(): MemberExpression | Identifier | FunctionExpression {
+    return this._callee;
+  }
+
+  set callee(value: MemberExpression | Identifier | FunctionExpression) {
+    if (_.isNil(value))
+      throw new Error(
+        "CallExpression's callee cannot be undefined, but is " + JSON.stringify(value)
+      );
+    if (value.type == "MemberExpression") {
+      this._callee = MemberExpression.fromJson(value);
+    } else if (value.type == "Identifier") {
+      this._callee = Identifier.fromJson(value);
+    } else if (value.type == "FunctionExpression") {
+      this._callee = FunctionExpression.fromJson(value);
     } else {
-      return this.callee.getParent();
+      throw new Error(
+        "Can only call a function object or object method or function definition, but is " +
+          JSON.stringify(value)
+      );
+    }
+  }
+
+  arguments!: any[];
+
+  getParent(): string | false {
+    if (this._callee instanceof Identifier) {
+      return this._callee.name;
+    } else if (this._callee instanceof FunctionExpression) {
+      return false;
+    } else {
+      return this._callee.getParent();
     }
   }
   isRootCallExpression(): boolean {
-    return this.callee.isRootMemberExpression();
+    if (this._callee instanceof FunctionExpression) return true;
+    return this._callee.isRootMemberExpression();
   }
   getParentModule(): Identifier | Literal | boolean {
-    if(this.callee instanceof Identifier){
+    if (this._callee instanceof Identifier) {
       return false;
     } else if (this.isRootCallExpression()) {
       return this.arguments[0];
     } else {
-      return this.callee instanceof MemberExpression && this.callee.object instanceof CallExpression
-        ? this.callee.object.getParentModule()
+      return this._callee instanceof MemberExpression &&
+        this._callee.object instanceof CallExpression
+        ? this._callee.object.getParentModule()
         : false;
     }
   }
   isAngularJSModuleDeclaration(): boolean {
-    return this.callee.isAngularJSModuleDeclaration();
+    if (
+      this._callee.type !== "MemberExpression" ||
+      !this.isAngularJSComponentModuleName(this.arguments[0]) ||
+      !this.isAngularJSModuleDeps(this.arguments[1])
+    )
+      return false;
+    return this._callee.isAngularJSModuleDeclaration();
   }
   getAngularJSModuleName(): Identifier | Literal | boolean {
-    if(this.isAngularJSModuleDeclaration()){
+    if (this.isAngularJSModuleDeclaration()) {
       return this.arguments[0];
     }
     return false;
   }
-  isAngularJSControllerDeclaration(): boolean {
-    return this.callee.isAngularJSControllerDeclaration();
+  isAngularJSModuleDeps(value) {
+    if (_.isNil(value)) {
+      return true;
+    } else if (value.type !== "ArrayExpression") {
+      return false;
+    } else {
+      const dependencyArray = ArrayExpression.fromJson(value);
+      return dependencyArray.canBeAngularJSModuleDeps;
+    }
   }
-  getAngularJSControllerName(): Identifier | Literal | boolean {
-    if(this.isAngularJSControllerDeclaration()){
-      return this.arguments[0];
+  isAngularJSComponentModuleName(value): boolean {
+    if (_.isNil(value)) return false;
+    return ["Identifier", "Literal"].includes(value.type);
+  }
+  isAngularJSComponentBody(value): boolean {
+    if (_.isNil(value)) return false;
+    return ["ArrayExpression", "CallExpression", "FunctionExpression"].includes(
+      value.type
+    );
+  }
+  isAngularJSComponentDeclaration(): boolean {
+    if (
+      this._callee.type !== "MemberExpression" ||
+      !this.isAngularJSComponentArguments(this.arguments)
+    )
+      return false;
+    return this._callee.isAngularJSComponentDeclaration();
+  }
+  isAngularJSComponentArguments(value): boolean {
+    if (
+      !_.isArray(value) ||
+      _.isEmpty(value) ||
+      value.length !== 2 ||
+      !this.isAngularJSComponentModuleName(value[0]) ||
+      !this.isAngularJSComponentBody(value[1])
+    )
+      return false;
+    return true;
+  }
+  getAngularJSComponentName(): Identifier | Literal | boolean {
+    if (this.isAngularJSComponentDeclaration()) {
+      const possibleCtrlName = this.arguments[0];
+      if (possibleCtrlName.type == "Identifier") {
+        return Identifier.fromJson(this.arguments[0]);
+      } else if (possibleCtrlName.type == "Literal") {
+        return Literal.fromJson(this.arguments[0]);
+      } else {
+        throw new Error(
+          "AngularJS Component can only be a string literal or variable with value as a string, but is " +
+            JSON.stringify(this.arguments[0])
+        );
+      }
     }
     return false;
   }
-  
-  static fromJson( jsonData ): CallExpression {
+
+  static fromJson(jsonData): CallExpression {
     return plainToClass(CallExpression, jsonData);
   }
 }

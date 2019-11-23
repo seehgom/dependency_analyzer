@@ -40,8 +40,8 @@ describe('CallExpression test', () => {
     expect(obj.isAngularJSModuleDeclaration()).true;
     const parentModule: Identifier = classToClass(<Identifier>obj.getAngularJSModuleName());
     expect(parentModule.type).to.eq("Identifier");
-    expect(obj.isAngularJSControllerDeclaration()).false;
-    expect(obj.getAngularJSControllerName()).false;
+    expect(obj.isAngularJSComponentDeclaration()).false;
+    expect(obj.getAngularJSComponentName()).false;
   });
   
   it('CallExpression should create an instance angular module declaration', () => {
@@ -75,8 +75,8 @@ describe('CallExpression test', () => {
     expect(obj.isAngularJSModuleDeclaration()).true;
     const parentModule: Identifier = classToClass(<Identifier>obj.getAngularJSModuleName());
     expect(parentModule.type).to.eq("Identifier");
-    expect(obj.isAngularJSControllerDeclaration()).false;
-    expect(obj.getAngularJSControllerName()).false;
+    expect(obj.isAngularJSComponentDeclaration()).false;
+    expect(obj.getAngularJSComponentName()).false;
   });
   
   it('CallExpression 2 should create an instance angular module declaration', () => {
@@ -112,8 +112,8 @@ describe('CallExpression test', () => {
     const parentModule: Literal = classToClass(<Literal>obj.getAngularJSModuleName());
     expect(parentModule.type).to.eq("Literal");
     expect(parentModule.value).to.eq("test");
-    expect(obj.isAngularJSControllerDeclaration()).false;
-    expect(obj.getAngularJSControllerName()).false;
+    expect(obj.isAngularJSComponentDeclaration()).false;
+    expect(obj.getAngularJSComponentName()).false;
   });
   it('CallExpression 3 should create an instance angular module declaration', () => {
     const jsonData = {
@@ -143,8 +143,8 @@ describe('CallExpression test', () => {
     expect(obj.isAngularJSModuleDeclaration()).true;
     const parentModule: Literal = classToClass(<Literal>obj.getAngularJSModuleName());
     expect(parentModule.type).to.eq("Literal");
-    expect(parentModule.value).to.eq("test");
-    expect(obj.isAngularJSControllerDeclaration()).false;
-    expect(obj.getAngularJSControllerName()).false;
+    expect(parentModule.value).to.eq("another");
+    expect(obj.isAngularJSComponentDeclaration()).false;
+    expect(obj.getAngularJSComponentName()).false;
   });
 });
