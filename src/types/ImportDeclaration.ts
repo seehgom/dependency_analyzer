@@ -2,6 +2,8 @@ import { ImportDefaultSpecifier } from './ImportDefaultSpecifier';
 import { Type } from 'class-transformer';
 import * as _ from 'lodash';
 import { Literal } from './Literal';
+import { FileImport } from './FileImport';
+import { IdentifierStorage } from '../uitility/IdentifierStorage';
 export class ImportDeclaration {
   type: "ImportDeclaration" = "ImportDeclaration";
   @Type(()=> ImportDefaultSpecifier) private _specifiers: ImportDefaultSpecifier[];
@@ -19,6 +21,7 @@ export class ImportDeclaration {
         throw new Error("Specifiers property in Import statement must be a list/array of Import specifier, but is "+JSON.stringify(importId));
       }
     }, []);
+    this.checkAndLoadToStorage();
   }
   @Type(()=>Literal) private _source: Literal;
   
@@ -29,5 +32,12 @@ export class ImportDeclaration {
   set source( value: Literal ) {
     if (value.type!=='Literal') throw new Error("Import source value must be a string literal, but is "+JSON.stringify(value));
     this._source = Literal.fromJson(value);
+    this.checkAndLoadToStorage();
+  }
+  private checkAndLoadToStorage(): void {
+    if (!this._source || !this._specifiers) return;
+    if(this._specifiers.length == 1){
+        IdentifierStorage.setIdentifierValue(this._specifiers[0].local, new FileImport(this._source.value));
+    }
   }
 }

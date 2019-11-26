@@ -5,6 +5,8 @@ import { CallExpression } from "./CallExpression";
 import { plainToClass, Type } from "class-transformer";
 import { NodeExpression } from "./NodeExpression";
 import * as _ from "lodash";
+import { FileImport } from "./FileImport";
+import { ObjectExpression } from "./ObjectExpression";
 export class ArrayExpression implements NodeExpression {
   type: "ArrayExpression" = "ArrayExpression";
   elements: any[];
@@ -19,8 +21,9 @@ export class ArrayExpression implements NodeExpression {
     return _.reduce(
       this.elements,
       (isValidAngularJSDepSoFar, depName) => {
-        if (depName.type !== "Literal" && depName.type !== "Identifier")
-          isValidAngularJSDepSoFar = false;
+        if (depName.type !== "Literal" && depName.type !== "Identifier") {
+          return false;
+        }
         return isValidAngularJSDepSoFar;
       },
       true
@@ -86,6 +89,20 @@ export class ArrayExpression implements NodeExpression {
       },
       []
     );
+  }
+
+  getArrayWithLiterals(): ArrayExpression {
+      const arrayRaw = [...this.elements];
+      const arrayWithLiterals: Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression > = arrayRaw.length==0?[]:_.reduce(arrayRaw, (arraySoFar, element)=>{
+        if (element.type=="Identifier") {
+          const ElementAsIdentifier = Identifier.fromJson(element);
+          const value = ElementAsIdentifier.getValue();
+          return [...arraySoFar, value];
+        } else {
+          return [...arraySoFar, element];
+        }
+      }, []);
+      return new ArrayExpression('ArrayExpression',arrayWithLiterals)
   }
 
   static fromJson(jsonData): ArrayExpression {

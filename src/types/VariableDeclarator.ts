@@ -8,6 +8,7 @@ import { IdentifierStorage } from '../uitility/IdentifierStorage';
 import { ArrayExpression } from './ArrayExpression';
 import { FunctionExpression } from './FunctionExpression';
 import { FileImport } from './FileImport';
+import { CallExpression } from './CallExpression';
 
 export class VariableDeclarator implements NodeExpression {
   type: "VariableDeclarator" = "VariableDeclarator";
@@ -62,7 +63,7 @@ export class VariableDeclarator implements NodeExpression {
   }
   
   private checkAndLoadToStorage(): void {
-    if (!this._id && !this._init) return;
+    if (!this._id || !this._init) return;
     if (this._init instanceof Literal){
       IdentifierStorage.setIdentifierValue(this._id, this._init);
     } else if (this._init instanceof Identifier) {
@@ -70,18 +71,9 @@ export class VariableDeclarator implements NodeExpression {
       if (!valueStoredForVariable) throw new Error("Cannot set variable equal to unfilled variable, problem variable name is"+this._id.name);
       IdentifierStorage.setIdentifierValue(this._id, valueStoredForVariable);
     } else if (this._init instanceof ArrayExpression){
-      const arrayRaw = [...this._init.elements];
-      const arrayWithLiterals: [] = arrayRaw.length==0?[]:_.reduce(arrayRaw, (arraySoFar, element)=>{
-        if (element.type=="Identifier") {
-          const ElementAsIdentifier = Identifier.fromJson(element);
-          const value = ElementAsIdentifier.getValue();
-          return [...arraySoFar, value];
-        } else {
-          return [...arraySoFar, element];
-        }
-      }, []);
-      const newArrayExpressionWithLiteralElements = new ArrayExpression('ArrayExpression',arrayWithLiterals)
-      IdentifierStorage.setIdentifierValue(this._id, newArrayExpressionWithLiteralElements);
+        IdentifierStorage.setIdentifierValue(this._id, this._init.getArrayExpressionWithLiterals());
+    } else if(this._id instanceof Identifier && this._init instanceof CallExpression && this._init.isRequireStatment()){
+        IdentifierStorage.setIdentifierValue(this._id, this._init.getFileImport());
     } else {
       IdentifierStorage.setIdentifierValue(this._id, this._init);
     }

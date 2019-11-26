@@ -6,6 +6,7 @@ import { FunctionExpression } from "./FunctionExpression";
 import { NodeExpression } from "./NodeExpression";
 import { plainToClass, Type } from "class-transformer";
 import * as _ from "lodash";
+import { FileImport } from "./FileImport";
 export class CallExpression extends NodeExpression {
   type: "CallExpression" = "CallExpression";
   @Type(() => NodeExpression, {
@@ -139,6 +140,27 @@ export class CallExpression extends NodeExpression {
       }
     }
     return false;
+  }
+
+  isRequireStatment(): boolean {
+    return this._callee instanceof Identifier && this._callee.name == "require" && this.arguments.length===1 && (this.arguments[0].type=="Literal" || this.arguments[0].type=="Identifier");
+  }
+
+  getFileImport(): FileImport {
+      if(this.isRequireStatment()){
+           const sourceArg = this.arguments[0];
+          if(sourceArg.type=="Literal"){
+              const literalObj = Literal.fromJson(sourceArg);
+              return new FileImport(literalObj.value);
+          } else if(sourceArg.type=="Identifier"){
+                const identifierLiteralValueObj = Identifier.fromJson(sourceArg).getValue();
+                if(identifierLiteralValueObj instanceof Literal){
+                    return new FileImport(identifierLiteralValueObj.value);
+                }
+          }
+          throw new Error("require can only take string as input, but is "+JSON.stringify(sourceArg));
+      }
+      throw new Error("Can get import information only on import or require statements, but asked for "+JSON.stringify(this));
   }
 
   static fromJson(jsonData): CallExpression {
