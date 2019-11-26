@@ -2,7 +2,6 @@ import {CallExpression} from './CallExpression';
 import {Identifier} from './Identifier';
 import { NodeExpression } from './NodeExpression';
 import { plainToClass, Type } from 'class-transformer';
-import { UtilityFunctions } from '../utility/UtilityFunctions';
 
 export class MemberExpression extends NodeExpression {
   type: "MemberExpression" = "MemberExpression";
