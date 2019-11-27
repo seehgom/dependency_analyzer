@@ -18,16 +18,16 @@ export class ProgramNode extends NodeExpression {
         { value: ExpressionStatement, name: "ExpressionStatement" }
       ]
     }
-  }) private _body!: VariableDeclaration[] | ExpressionStatement[];
+  }) private _body!: Array<VariableDeclaration | ExpressionStatement>;
   
-  get body(): VariableDeclaration[] | ExpressionStatement[] {
+  get body(): Array<VariableDeclaration | ExpressionStatement> {
     return this._body;
   }
   
-  set body( value: VariableDeclaration[] | ExpressionStatement[] ) {
+  set body( value: Array<VariableDeclaration | ExpressionStatement> ) {
     if (!_.isArray(value)) throw new Error("ProgramNode body must be an array, but is "+value);
     if (_.isEmpty(value)) this._body = [];
-    this._body = _.reduce(value, (bodyOfStatementsSoFar, statement)=>{
+    this._body = _.reduce(value, (bodyOfStatementsSoFar, statement:VariableDeclaration | ExpressionStatement)=>{
       if (statement.type == "VariableDeclaration"){
         return [...bodyOfStatementsSoFar, VariableDeclaration.fromJson(statement)];
       } else if (statement.type == "ExpressionStatement"){
