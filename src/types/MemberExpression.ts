@@ -32,7 +32,6 @@ export class MemberExpression extends NodeExpression {
   }
   
   set object( value: CallExpression | Identifier ) {
-    debugger;
     if (value.type == "CallExpression") {
       this._object = CallExpression.fromJson(value);
     } else if(value.type == "Identifier") {
@@ -44,7 +43,6 @@ export class MemberExpression extends NodeExpression {
   
   constructor( type: "MemberExpression", computed: boolean, object: CallExpression | Identifier, property: Identifier ) {
     super();
-    debugger;
     this.type = "MemberExpression";
     this.computed = computed;
     this._object = object;

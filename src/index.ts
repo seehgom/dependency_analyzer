@@ -1,2 +1,12 @@
 // This is the library entry point
-export * from './types/root';
+import { IdentifierStorage } from './uitility/IdentifierStorage';
+
+declare global {
+  function initializeContext(context: string): void;
+}
+const _global = (window /* browser */ || global /* node */) as any
+_global.initializeContext = function initializeContext(context: string) {
+  IdentifierStorage.initializeContext(context);
+};
+
+export {};

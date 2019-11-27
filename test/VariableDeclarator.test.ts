@@ -1,11 +1,12 @@
 import "reflect-metadata";
 import "es6-shim";
-import {plainToClass} from 'class-transformer';
+import { classToClass, plainToClass } from 'class-transformer';
 import {expect} from 'chai';
 
 import { Identifier } from '../src/types/Identifier';
 import { Literal } from '../src/types/Literal';
 import { VariableDeclarator } from '../src/types/VariableDeclarator';
+import { IdentifierStorage } from '../src/uitility/IdentifierStorage';
 
 describe('VariableDeclarator test', ()=>{
   it('VariableDeclarator initialization should exist', ()=>{
@@ -77,6 +78,45 @@ describe('VariableDeclarator test', ()=>{
     expect(obj instanceof VariableDeclarator).to.be.true;
     expect(obj.isInitalization()).to.be.true;
     expect(obj.isLiteralInitalization()).false;
+  });
+  it('variable VariableDeclarator containing require statement should exist', ()=>{
+    const jsonData = {
+      "type": "VariableDeclarator",
+      "id": {
+        "type": "Identifier",
+        "name": "ctrlName"
+      },
+      "init": {
+        "type": "CallExpression",
+        "callee": {
+          "type": "Identifier",
+          "name": "require"
+        },
+        "arguments": [
+          {
+            "type": "Literal",
+            "value": "ctrlSrc",
+            "raw": "\"ctrlSrc\""
+          }
+        ]
+      }
+    };
+    const obj: VariableDeclarator = plainToClass(VariableDeclarator, jsonData);
+    expect(obj instanceof VariableDeclarator).to.be.true;
+    expect(obj.isInitalization()).to.be.true;
+    expect(obj.isLiteralInitalization()).false;
+    const id = plainToClass(Identifier, {
+      "type": "Literal",
+      "value": "ctrlName",
+      "raw": "\"ctrlName\""
+    });
+    const literalValue = IdentifierStorage.getIdentifierValue(id);
+    expect(literalValue instanceof Literal).true;
+    if(literalValue instanceof Literal){
+      expect(literalValue.value).eq("ctrlSrc");
+    } else {
+      expect(true).false;
+    }
   });
 });
 

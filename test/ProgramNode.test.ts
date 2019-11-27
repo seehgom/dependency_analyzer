@@ -3,9 +3,11 @@ import "es6-shim";
 import { classToClass } from 'class-transformer';
 import {expect} from 'chai';
 import { ProgramNode } from '../src/types/ProgramNode';
+import { IdentifierStorage } from '../src/uitility/IdentifierStorage';
 
 
 describe('ProgramNode test', ()=>{
+  IdentifierStorage.initializeContext("Program1");
   it('ProgramNode should exist', function () {
     const jsonData = {
       "type": "Program",
@@ -63,6 +65,7 @@ describe('ProgramNode test', ()=>{
     expect(obj instanceof ProgramNode).true;
   });
   it('ProgramNode 2 should exist', function () {
+    IdentifierStorage.initializeContext("Program2");
     const jsonData = {
       "type": "Program",
       "body": [
