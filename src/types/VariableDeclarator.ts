@@ -33,16 +33,17 @@ export class VariableDeclarator implements NodeExpression {
         { value: FileImport, name: "FileImport" },
         { value: Identifier, name: "Identifier" },
         { value: ArrayExpression, name: "ArrayExpression" },
-        { value: FunctionExpression, name: "FunctionExpression" }
+        { value: FunctionExpression, name: "FunctionExpression" },
+        { value: CallExpression, name: "CallExpression" }
       ]
     }
-  }) private _init?: FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression;
+  }) private _init: FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression;
   
-  get init(): FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression{
+  get init(): FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression {
     return this._init;
   }
   
-  set init( value: FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression) {
+  set init( value: FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression) {
     if (_.isNil(value)) throw new Error("VariableDeclarator's init property cannot be undefined, but is "+JSON.stringify(value));
     if (value.type=="Literal"){
       this._init = Literal.fromJson(value);
@@ -56,6 +57,8 @@ export class VariableDeclarator implements NodeExpression {
       this._init = FunctionExpression.fromJson(value);
     } else if (value.type=="FileImport"){
       this._init = FileImport.fromJson(value);
+    } else if (value.type=="CallExpression"){
+      this._init = CallExpression.fromJson(value);
     } else {
       throw new Error("VariableDeclaration init property can either be undefined, a literal or an object expression but is "+JSON.stringify(value));
     }
@@ -63,19 +66,19 @@ export class VariableDeclarator implements NodeExpression {
   }
   
   private checkAndLoadToStorage(): void {
-    if (!this._id || !this._init) return;
-    if (this._init instanceof Literal){
-      IdentifierStorage.setIdentifierValue(this._id, this._init);
-    } else if (this._init instanceof Identifier) {
-      const valueStoredForVariable = this._init.getValue();
-      if (!valueStoredForVariable) throw new Error("Cannot set variable equal to unfilled variable, problem variable name is"+this._id.name);
-      IdentifierStorage.setIdentifierValue(this._id, valueStoredForVariable);
-    } else if (this._init instanceof ArrayExpression){
-        IdentifierStorage.setIdentifierValue(this._id, this._init.getArrayWithLiterals());
-    } else if(this._id instanceof Identifier && this._init instanceof CallExpression && this._init.isRequireStatment()){
-        IdentifierStorage.setIdentifierValue(this._id, this._init.getFileImport());
+    if (!this.id || !this.init) return;
+    if (this.init instanceof Literal){
+      IdentifierStorage.setIdentifierValue(this.id, this.init);
+    } else if (this.init instanceof Identifier) {
+      const valueStoredForVariable = this.init.getValue();
+      if (!valueStoredForVariable) throw new Error("Cannot set variable equal to unfilled variable, problem variable name is"+this.id.name);
+      IdentifierStorage.setIdentifierValue(this.id, valueStoredForVariable);
+    } else if (this.init instanceof ArrayExpression){
+        IdentifierStorage.setIdentifierValue(this.id, this.init.getArrayWithLiterals());
+    } else if(this.id instanceof Identifier && this.init instanceof CallExpression && this.init.isRequireStatment()){
+        IdentifierStorage.setIdentifierValue(this.id, this.init.getFileImport());
     } else {
-      IdentifierStorage.setIdentifierValue(this._id, this._init);
+      IdentifierStorage.setIdentifierValue(this.id, this.init);
     }
   }
   
@@ -85,9 +88,9 @@ export class VariableDeclarator implements NodeExpression {
   }
   
   isInitalization(): boolean {
-    return !!this._init;
+    return !!this.init;
   }
   isLiteralInitalization(): boolean {
-    return this.isInitalization() && this._init instanceof Literal;
+    return this.isInitalization() && this.init instanceof Literal;
   }
 }

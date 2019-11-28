@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import "es6-shim";
+import * as deepEqual from "deep-equal";
 import { classToClass, plainToClass } from 'class-transformer';
 import {expect} from 'chai';
 
@@ -7,6 +8,8 @@ import { Identifier } from '../src/types/Identifier';
 import { Literal } from '../src/types/Literal';
 import { VariableDeclarator } from '../src/types/VariableDeclarator';
 import { IdentifierStorage } from '../src/uitility/IdentifierStorage';
+import { FileImport } from '../src/types/FileImport';
+import { RootContext } from '../src';
 
 describe('VariableDeclarator test', ()=>{
   it('VariableDeclarator initialization should exist', ()=>{
@@ -80,6 +83,13 @@ describe('VariableDeclarator test', ()=>{
     expect(obj.isLiteralInitalization()).false;
   });
   it('variable VariableDeclarator containing require statement should exist', ()=>{
+    RootContext.initializeContext("VariableDeclarator1");
+    const fileImport = new FileImport("ctrlSrc");
+    const id = Identifier.fromJson({
+      "type": "Identifier",
+      "name": "ctrlName"
+    });
+  
     const jsonData = {
       "type": "VariableDeclarator",
       "id": {
@@ -101,22 +111,12 @@ describe('VariableDeclarator test', ()=>{
         ]
       }
     };
-    const obj: VariableDeclarator = plainToClass(VariableDeclarator, jsonData);
+    const obj: VariableDeclarator = VariableDeclarator.fromJson(jsonData);
     expect(obj instanceof VariableDeclarator).to.be.true;
     expect(obj.isInitalization()).to.be.true;
     expect(obj.isLiteralInitalization()).false;
-    const id = plainToClass(Identifier, {
-      "type": "Literal",
-      "value": "ctrlName",
-      "raw": "\"ctrlName\""
-    });
-    const literalValue = IdentifierStorage.getIdentifierValue(id);
-    expect(literalValue instanceof Literal).true;
-    if(literalValue instanceof Literal){
-      expect(literalValue.value).eq("ctrlSrc");
-    } else {
-      expect(true).false;
-    }
+    const fileImport1 = classToClass(<FileImport>IdentifierStorage.getIdentifierValue(id));
+    expect(deepEqual(fileImport1,fileImport)).true;
   });
 });
 

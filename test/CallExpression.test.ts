@@ -6,6 +6,7 @@ import {CallExpression} from '../src/types/CallExpression';
 import { Identifier } from '../src/types/Identifier';
 import { Literal } from '../src/types/Literal';
 import { IdentifierStorage } from '../src/uitility/IdentifierStorage';
+import { RootContext } from '../src';
 
 describe('CallExpression test', () => {
   
@@ -151,7 +152,7 @@ describe('CallExpression test', () => {
   
   
   it('CallExpression 4 should create an instance angular module declaration', () => {
-    IdentifierStorage.initializeContext("CallExpression");
+    RootContext.initializeContext("CallExpression");
     const jsonData = {
       "type": "CallExpression",
       "callee": {
@@ -161,21 +162,19 @@ describe('CallExpression test', () => {
       "arguments": [
         {
           "type": "Literal",
-          "value": "ctrlName",
-          "raw": "\"ctrlName\""
+          "value": "ctrlSrc",
+          "raw": "\"ctrlSrc\""
         }
       ]
     };
     const obj: CallExpression = CallExpression.fromJson(jsonData);
     expect(obj instanceof CallExpression).true;
     expect(obj.isAngularJSModuleDeclaration()).false;
-    const parentModule: Literal = classToClass(<Literal>obj.getAngularJSModuleName());
-    expect(parentModule.type).to.eq("Literal");
-    expect(parentModule.value).to.eq("another");
+    expect(obj.getAngularJSModuleName()).false;
     expect(obj.isAngularJSComponentDeclaration()).false;
     expect(obj.getAngularJSComponentName()).false;
     expect(obj.isRequireStatment()).true;
-    expect(obj.getFileImport().source).to.eq("ctrlName")
+    expect(obj.getFileImport().source).to.eq("ctrlSrc")
   });
   
 });

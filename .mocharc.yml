@@ -1,0 +1,5 @@
+
+#file:
+#  - "node_modules/reflect-metadata/Reflect.js"
+#  - "src/**/*.ts"
+#  - "test/**/*.test.ts"

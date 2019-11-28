@@ -4,11 +4,12 @@ import { classToClass } from 'class-transformer';
 import {expect} from 'chai';
 import { ProgramNode } from '../src/types/ProgramNode';
 import { IdentifierStorage } from '../src/uitility/IdentifierStorage';
+import { RootContext } from '../src';
 
 
 describe('ProgramNode test', ()=>{
-  IdentifierStorage.initializeContext("Program1");
   it('ProgramNode should exist', function () {
+    RootContext.initializeContext("Program1");
     const jsonData = {
       "type": "Program",
       "body": [
@@ -65,7 +66,7 @@ describe('ProgramNode test', ()=>{
     expect(obj instanceof ProgramNode).true;
   });
   it('ProgramNode 2 should exist', function () {
-    IdentifierStorage.initializeContext("Program2");
+    RootContext.initializeContext("Program2");
     const jsonData = {
       "type": "Program",
       "body": [
