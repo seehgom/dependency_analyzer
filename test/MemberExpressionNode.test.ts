@@ -70,5 +70,23 @@ describe('MemberExpression test', ()=>{
     };
     const obj: MemberExpression = MemberExpression.fromJson(jsonData);
     expect(obj instanceof MemberExpression).true;
+    expect(obj.isModuleExports()).false;
+  })
+  it('MemberExpression isModuleExports', ()=>{
+    const jsonData = {
+      "type": "MemberExpression",
+      "computed": false,
+      "object": {
+        "type": "Identifier",
+        "name": "module"
+      },
+      "property": {
+        "type": "Identifier",
+        "name": "exports"
+      }
+    };
+    const obj: MemberExpression = MemberExpression.fromJson(jsonData);
+    expect(obj instanceof MemberExpression).true;
+    expect(obj.isModuleExports()).true;
   })
 });

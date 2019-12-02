@@ -49,7 +49,7 @@ export class ArrayExpression implements NodeExpression {
     );
   }
 
-  isisAngularJSComponentDepsBody(): boolean {
+  isAngularJSComponentDepsBody(): boolean {
     if (
       _.isNil(this.elements) ||
       !_.isArray(this.elements) ||
@@ -75,34 +75,46 @@ export class ArrayExpression implements NodeExpression {
     return result;
   }
 
-  getAngularJSComponentDeps(): false | Identifier[] | Literal[] {
-    if (!this.isisAngularJSComponentDepsBody()) return false;
+  getAngularJSComponentDeps(): false | Array<Identifier | Literal> {
+    if (!this.isAngularJSComponentDepsBody()) return false;
     return _.reduce(
-      this.elements,
+      this.getElementsWithLiterals(),
       (depSoFar, dep, index) => {
         if (index == this.elements.length - 1) return depSoFar;
         if (dep.type == "Literal") {
           return [...depSoFar, Identifier.fromJson(dep)];
-        } else if (dep.type == "Literal") {
-          return [...depSoFar, Identifier.fromJson(dep)];
+        } else if (dep.type == "FileImport") {
+          return [...depSoFar, FileImport.fromJson(dep)];
+        } else if (dep.type == "ArrayExpression") {
+          return [...depSoFar, ArrayExpression.fromJson(dep).getArrayExpressionWithLiterals()];
+        } else if (dep.type == "ObjectExpression") {
+          return [...depSoFar, ObjectExpression.fromJson(dep)];
+        } else if (dep.type == "FunctionExpression") {
+          return [...depSoFar, FunctionExpression.fromJson(dep)];
+        } else {
+          throw new Error("Unexpected element in angularjs component argument, arg="+JSON.stringify(dep));
         }
       },
       []
     );
   }
+  
+  getElementsWithLiterals(): Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression > {
+    const arrayRaw = [...this.elements];
+    const arrayWithLiterals: Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression > = arrayRaw.length==0?[]:_.reduce(arrayRaw, (arraySoFar, element)=>{
+      if (element.type=="Identifier") {
+        const ElementAsIdentifier = Identifier.fromJson(element);
+        const value = ElementAsIdentifier.getValue();
+        return [...arraySoFar, value];
+      } else {
+        return [...arraySoFar, element];
+      }
+    }, []);
+    return arrayWithLiterals;
+  }
 
-  getArrayWithLiterals(): ArrayExpression {
-      const arrayRaw = [...this.elements];
-      const arrayWithLiterals: Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression > = arrayRaw.length==0?[]:_.reduce(arrayRaw, (arraySoFar, element)=>{
-        if (element.type=="Identifier") {
-          const ElementAsIdentifier = Identifier.fromJson(element);
-          const value = ElementAsIdentifier.getValue();
-          return [...arraySoFar, value];
-        } else {
-          return [...arraySoFar, element];
-        }
-      }, []);
-      return new ArrayExpression('ArrayExpression',arrayWithLiterals)
+  getArrayExpressionWithLiterals(): ArrayExpression {
+      return new ArrayExpression('ArrayExpression',this.getElementsWithLiterals());
   }
 
   static fromJson(jsonData): ArrayExpression {

@@ -74,7 +74,7 @@ export class VariableDeclarator implements NodeExpression {
       if (!valueStoredForVariable) throw new Error("Cannot set variable equal to unfilled variable, problem variable name is"+this.id.name);
       IdentifierStorage.setIdentifierValue(this.id, valueStoredForVariable);
     } else if (this.init instanceof ArrayExpression){
-        IdentifierStorage.setIdentifierValue(this.id, this.init.getArrayWithLiterals());
+        IdentifierStorage.setIdentifierValue(this.id, this.init.getArrayExpressionWithLiterals());
     } else if(this.id instanceof Identifier && this.init instanceof CallExpression && this.init.isRequireStatment()){
         IdentifierStorage.setIdentifierValue(this.id, this.init.getFileImport());
     } else {

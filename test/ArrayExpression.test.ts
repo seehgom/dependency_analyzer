@@ -15,7 +15,7 @@ describe('ArrayExpression empty angular module dependecies test', ()=>{
     };
     const obj: ArrayExpression = ArrayExpression.fromJson(jsonData);
     expect(obj instanceof ArrayExpression).true;
-    expect(obj.isisAngularJSComponentDepsBody()).false;
+    expect(obj.isAngularJSComponentDepsBody()).false;
     expect(obj.getAngularJSComponentDeps()).false;
     expect(obj.canBeAngularJSModuleDeps()).true;
     const angularJSModuleDeps = obj.getAngularJSModuleDeps();
@@ -36,7 +36,7 @@ describe('ArrayExpression empty angular module dependecies test', ()=>{
     };
     const obj: ArrayExpression = ArrayExpression.fromJson(jsonData);
     expect(obj instanceof ArrayExpression).true;
-    expect(obj.isisAngularJSComponentDepsBody()).false;
+    expect(obj.isAngularJSComponentDepsBody()).false;
     expect(obj.getAngularJSComponentDeps()).false;
     expect(obj.canBeAngularJSModuleDeps()).true;
     const angularJSModuleDeps: false | Identifier[] | Literal[] = obj.getAngularJSModuleDeps();
@@ -76,8 +76,8 @@ describe('ArrayExpression empty angular module dependecies test', ()=>{
     };
     const obj: ArrayExpression = ArrayExpression.fromJson(jsonData);
     expect(obj instanceof ArrayExpression).true;
-    expect(obj.isisAngularJSComponentDepsBody()).true;
-    const ComponentDependencies: false | Literal[] | Identifier[] = obj.getAngularJSComponentDeps();
+    expect(obj.isAngularJSComponentDepsBody()).true;
+    const ComponentDependencies = obj.getAngularJSComponentDeps();
     const OnlyDependency  = ComponentDependencies[0];
     expect(OnlyDependency.type=="Literal").true;
     expect(OnlyDependency.value=="$scope").true;

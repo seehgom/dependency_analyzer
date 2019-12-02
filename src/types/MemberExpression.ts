@@ -78,4 +78,7 @@ export class MemberExpression extends NodeExpression {
   isRootMemberExpression() {
     return this._object.type == "Identifier";
   }
+  isModuleExports(): boolean {
+    return this.object instanceof Identifier && this.object.name=="module" && this.property instanceof Identifier && this.property.name=="exports";
+  }
 }
