@@ -106,6 +106,16 @@ export class ArrayExpression implements NodeExpression {
         const ElementAsIdentifier = Identifier.fromJson(element);
         const value = ElementAsIdentifier.getValue();
         return [...arraySoFar, value];
+      } else if(element.type=="Literal"){
+        return [...arraySoFar, Literal.fromJson(element)];
+      } else if(element.type=="FileImport"){
+        return [...arraySoFar, FileImport.fromJson(element)];
+      } else if(element.type=="ArrayExpression"){
+        return [...arraySoFar, ArrayExpression.fromJson(element)];
+      } else if(element.type=="ObjectExpression"){
+        return [...arraySoFar, ObjectExpression.fromJson(element)];
+      } else if(element.type=="FunctionExpression"){
+        return [...arraySoFar, FunctionExpression.fromJson(element)];
       } else {
         return [...arraySoFar, element];
       }

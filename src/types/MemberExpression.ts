@@ -1,3 +1,4 @@
+// import 'reflect-metadata';
 import {CallExpression} from './CallExpression';
 import {Identifier} from './Identifier';
 import { NodeExpression } from './NodeExpression';
@@ -39,14 +40,6 @@ export class MemberExpression extends NodeExpression {
     } else {
       throw new Error("Wrong type of object property passed, but is "+JSON.stringify(value));
     }
-  }
-  
-  constructor( type: "MemberExpression", computed: boolean, object: CallExpression | Identifier, property: Identifier ) {
-    super();
-    this.type = "MemberExpression";
-    this.computed = computed;
-    this._object = object;
-    this._property = property;
   }
   
   static fromJson(jsonData): MemberExpression {

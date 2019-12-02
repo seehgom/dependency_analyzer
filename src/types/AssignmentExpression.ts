@@ -79,7 +79,6 @@ export class AssignmentExpression {
     } else {
       throw new Error("AssignmentExpression's right side is wrong type, left="+JSON.stringify(value));
     }
-    this._right = value;
   }
   
   isAngularJSComponentExportArray(): boolean {
