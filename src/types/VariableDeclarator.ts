@@ -77,6 +77,8 @@ export class VariableDeclarator implements NodeExpression {
         IdentifierStorage.setIdentifierValue(this.id, this.init.getArrayExpressionWithLiterals());
     } else if(this.id instanceof Identifier && this.init instanceof CallExpression && this.init.isRequireStatment()){
         IdentifierStorage.setIdentifierValue(this.id, this.init.getFileImport());
+    // } else if(this.id instanceof Identifier && this.init instanceof FunctionExpression){
+    //   IdentifierStorage.setIdentifierValue(this.id, this.init);
     } else {
       IdentifierStorage.setIdentifierValue(this.id, this.init);
     }

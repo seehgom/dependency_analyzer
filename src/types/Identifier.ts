@@ -7,6 +7,7 @@ import { ObjectExpression } from './ObjectExpression';
 import { FileImport } from './FileImport';
 import { FunctionExpression } from './FunctionExpression';
 import { CallExpression } from './CallExpression';
+import { FunctionDeclaration } from './FunctionDeclaration';
 
 export class Identifier implements NodeExpression {
   type: "Identifier" = "Identifier";
@@ -32,7 +33,7 @@ export class Identifier implements NodeExpression {
   getParent(): string {
     return this.name;
   }
-  getValue(): FileImport | Literal | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression {
+  getValue(): FileImport | Literal | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression | FunctionDeclaration{
     const value = IdentifierStorage.getIdentifierValue(this);
     if (value instanceof Identifier){
       return value.getValue();

@@ -1,4 +1,4 @@
-// import 'reflect-metadata';
+import 'reflect-metadata';
 import {CallExpression} from './CallExpression';
 import {Identifier} from './Identifier';
 import { NodeExpression } from './NodeExpression';

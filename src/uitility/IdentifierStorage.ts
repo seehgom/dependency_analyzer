@@ -6,9 +6,10 @@ import { FunctionExpression } from '../types/FunctionExpression';
 import { FileImport } from '../types/FileImport';
 import * as _ from 'lodash';
 import { CallExpression } from '../types/CallExpression';
+import { FunctionDeclaration } from '../types/FunctionDeclaration';
 
 export class IdentifierStorage {
-  static map: Map<string, FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression>;
+  static map: Map<string, FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression | FunctionDeclaration>;
   static mapHolder: any;
   static context: string;
   static initializeContext(cont: string | Map<string, any>){
@@ -31,7 +32,7 @@ export class IdentifierStorage {
         }
       }
       IdentifierStorage.context = cont;
-      IdentifierStorage.map = new Map<string, FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression>();
+      IdentifierStorage.map = new Map<string, FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression | FunctionDeclaration>();
   
       if(!IdentifierStorage.mapHolder) {
         IdentifierStorage.mapHolder = {[IdentifierStorage.context]: IdentifierStorage.map};
@@ -49,17 +50,17 @@ export class IdentifierStorage {
     }
     
   }
-  static setIdentifierValue(id: Identifier, value: FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression){
+  static setIdentifierValue(id: Identifier, value: FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression | FunctionDeclaration){
     if(!IdentifierStorage.context || !IdentifierStorage.map) throw new Error("Context must be initialized");
     if (!(id instanceof Identifier)) {
       throw new Error("Error creating a new Variable with bad id/name expected and identifier, but is "+JSON.stringify(id));
     }
-    if (!(value instanceof FileImport || value instanceof Literal || value instanceof Identifier || value instanceof ArrayExpression || value instanceof ObjectExpression || value instanceof FunctionExpression)) {
+    if (!(value instanceof FileImport || value instanceof Literal || value instanceof Identifier || value instanceof ArrayExpression || value instanceof ObjectExpression || value instanceof FunctionExpression || value instanceof FunctionDeclaration)) {
       throw new Error("Error creating a Variable, expected a valid value but got "+JSON.stringify(value));
     }
     IdentifierStorage.map.set(id.name, value);
   }
-  static getIdentifierValue(id: Identifier): FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression {
+  static getIdentifierValue(id: Identifier): FileImport | Literal | Identifier | ArrayExpression | ObjectExpression | FunctionExpression | CallExpression | FunctionDeclaration {
     if(!IdentifierStorage.context || !IdentifierStorage.map) throw new Error("Context must be initialized");
     if (id.type!=='Identifier') throw new Error("Can only get a value for a Variable, but got id as "+JSON.stringify(id));
     return IdentifierStorage.map.get(id.name);

@@ -8,6 +8,7 @@ import { FunctionExpression } from './FunctionExpression';
 import { CallExpression } from './CallExpression';
 import { plainToClass, Type } from 'class-transformer';
 import { NodeExpression } from './NodeExpression';
+import { FunctionDeclaration } from './FunctionDeclaration';
 
 export class AssignmentExpression {
   type: "AssignmentExpression" = "AssignmentExpression";
@@ -86,7 +87,7 @@ export class AssignmentExpression {
       this.right instanceof ArrayExpression && this.right.isAngularJSComponentDepsBody();
   }
   
-  getAngularJSComponentExportArray(): Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression > {
+  getAngularJSComponentExportArray(): Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression | FunctionDeclaration> {
     if(this.isAngularJSComponentExportArray() && this.right instanceof ArrayExpression){
       return this.right.getElementsWithLiterals();
     }

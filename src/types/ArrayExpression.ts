@@ -7,6 +7,7 @@ import { NodeExpression } from "./NodeExpression";
 import * as _ from "lodash";
 import { FileImport } from "./FileImport";
 import { ObjectExpression } from "./ObjectExpression";
+import { FunctionDeclaration } from './FunctionDeclaration';
 export class ArrayExpression implements NodeExpression {
   type: "ArrayExpression" = "ArrayExpression";
   elements: any[];
@@ -91,6 +92,8 @@ export class ArrayExpression implements NodeExpression {
           return [...depSoFar, ObjectExpression.fromJson(dep)];
         } else if (dep.type == "FunctionExpression") {
           return [...depSoFar, FunctionExpression.fromJson(dep)];
+        } else if (dep.type == "FunctionDeclaration") {
+          return [...depSoFar, FunctionDeclaration.fromJson(dep)];
         } else {
           throw new Error("Unexpected element in angularjs component argument, arg="+JSON.stringify(dep));
         }
@@ -99,9 +102,9 @@ export class ArrayExpression implements NodeExpression {
     );
   }
   
-  getElementsWithLiterals(): Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression > {
+  getElementsWithLiterals(): Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression | FunctionDeclaration> {
     const arrayRaw = [...this.elements];
-    const arrayWithLiterals: Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression > = arrayRaw.length==0?[]:_.reduce(arrayRaw, (arraySoFar, element)=>{
+    const arrayWithLiterals: Array<Literal | FileImport | ArrayExpression | ObjectExpression | FunctionExpression | FunctionDeclaration> = arrayRaw.length==0?[]:_.reduce(arrayRaw, (arraySoFar, element)=>{
       if (element.type=="Identifier") {
         const ElementAsIdentifier = Identifier.fromJson(element);
         const value = ElementAsIdentifier.getValue();
@@ -116,6 +119,8 @@ export class ArrayExpression implements NodeExpression {
         return [...arraySoFar, ObjectExpression.fromJson(element)];
       } else if(element.type=="FunctionExpression"){
         return [...arraySoFar, FunctionExpression.fromJson(element)];
+      } else if(element.type=="FunctionDeclaration"){
+        return [...arraySoFar, FunctionDeclaration.fromJson(element)];
       } else {
         return [...arraySoFar, element];
       }
