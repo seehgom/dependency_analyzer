@@ -1,0 +1,37 @@
+vscode:
+  extensions:
+    - esbenp.prettier-vscode@3.9.0:AW7isKZY5eHtlrdig7YBaw==
+    - wmaurer.change-case@1.0.0:EFbL568cjs07Ajw2vuXcpw==
+    - eg2.vscode-npm-script@0.3.9:FTjGx1Gmz+E5EP1FHaYLqQ==
+    - xabikos.JavaScriptSnippets@1.7.2:XXmiw8r7K3Guifex/E73aQ==
+    - formulahendry.auto-close-tag@0.5.6:oZ/8R2VhZEhkHsoeO57hSw==
+    - Angular.ng-template@0.900.0:+zD6sFzwleIgNNsDrLRqnw==
+    - dbaeumer.vscode-eslint@1.9.1:YVcwmzKVVl+zZ+wMB02GjQ==
+    - ccimage.jsonviewer@1.2.2:Jj4wGV2JOlBRLJqDiZW4Pw==
+    - christian-kohler.npm-intellisense@1.3.0:yQtCdwoyo890Bn9NOEuEDA==
+    - ionutvmi.path-autocomplete@1.13.3:XzX3IFyeQJx3JGiFjNXD2g==
+    - ms-vscode.vscode-typescript-tslint-plugin@1.2.3:MioHhlbqHKgivweg8MqHrA==
+    - hbenl.vscode-test-explorer@2.14.6:fm4SJyvX01oein7RXaaGlg==
+    - hbenl.vscode-mocha-test-adapter@2.1.3:Pzy/nE8/HhuH6E9WK7h2pw==
+    - VisualStudioExptTeam.vscodeintellicode@1.2.0:ZVy7XFOZUd4m0FZb3PUFbA==
+    - jabacchetta.vscode-essentials@1.3.4:7D7Af5jxlW164IO2DT8clQ==
+    - rokoroku.vscode-theme-darcula@1.2.0:ZyVHS8l8L8mQegxVPLtifg==
+    - lukaserat.npm-scripts@1.0.0:mQQ0SDAGb6nTEqA66A55tA==
+github:
+  prebuilds:
+    # enable for the master/default branch (defaults to true)
+    master: true
+    # enable for all branches in this repo (defaults to false)
+    branches: true
+    # enable for pull requests coming from this repo (defaults to true)
+    pullRequests: true
+    # enable for pull requests coming from forks (defaults to false)
+    pullRequestsFromForks: true
+    # add a check to pull requests (defaults to true)
+    addCheck: true
+    # add a "Review in Gitpod" button as a comment to pull requests (defaults to false)
+    addComment: true
+    # add a "Review in Gitpod" button to the pull request's description (defaults to false)
+    addBadge: false
+    # add a label once the prebuild is ready to pull requests (defaults to false)
+    addLabel: false
